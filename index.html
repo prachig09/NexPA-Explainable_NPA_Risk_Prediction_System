@@ -3,88 +3,177 @@
 <head>
   <meta charset="UTF-8">
   <title>NexPA - Explainable NPA Risk System</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- External CSS -->
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 p-6">
-  <div class="container">
-    <h1 class="title">
-      💳 NexPA - Explainable NPA Risk Prediction System
-    </h1>
+<body class="light-theme">
+  <div class="dashboard-container">
 
-    <!-- SINGLE USER FORM -->
-    <div class="grid grid-cols-2 gap-4">
-      <input id="Age" placeholder="Age" class="input">
-      <input id="Income" placeholder="Income" class="input">
-      <input id="LoanAmount" placeholder="Loan Amount" class="input">
-      <input id="CreditScore" placeholder="Credit Score" class="input">
-      <input id="MonthsEmployed" placeholder="Months Employed" class="input">
-      <input id="NumCreditLines" placeholder="Credit Lines" class="input">
-      <input id="InterestRate" placeholder="Interest Rate" class="input">
-      <input id="LoanTerm" placeholder="Loan Term" class="input">
-      <input id="DTIRatio" placeholder="DTI Ratio" class="input">
+    <!-- LEFT TAB PANEL -->
+    <div class="sidebar">
+      <h1 class="sidebar-title">NexPA Dashboard</h1>
 
-      <select id="Education" class="input">
-        <option>High School</option>
-        <option>Bachelor's</option>
-        <option>Master's</option>
-      </select>
+      <div class="tabs">
+        <button id="singleTab" class="tab active">Single Prediction</button>
+        <button id="batchTab" class="tab">Batch Prediction</button>
+      </div>
 
-      <select id="EmploymentType" class="input">
-        <option>Full-time</option>
-        <option>Self-employed</option>
-        <option>Unemployed</option>
-      </select>
-
-      <select id="MaritalStatus" class="input">
-        <option>Single</option>
-        <option>Married</option>
-      </select>
-
-      <select id="HasMortgage" class="input">
-        <option>No</option>
-        <option>Yes</option>
-      </select>
-
-      <select id="HasDependents" class="input">
-        <option>No</option>
-        <option>Yes</option>
-      </select>
-
-      <select id="LoanPurpose" class="input">
-        <option>Home</option>
-        <option>Business</option>
-        <option>Education</option>
-        <option>Other</option>
-      </select>
-
-      <select id="HasCoSigner" class="input">
-        <option>No</option>
-        <option>Yes</option>
-      </select>
+      <!-- THEME TOGGLE -->
+      <div class="theme-toggle">
+        <label class="switch">
+          <input type="checkbox" id="themeSwitch">
+          <span class="slider"></span>
+        </label>
+        <span>Dark Mode</span>
+      </div>
     </div>
 
-    <!-- SINGLE ANALYSIS BUTTON -->
-    <button onclick="predict()" class="btn">Analyze Risk</button>
+    <!-- RIGHT CONTENT PANEL -->
+    <div class="content">
+      
+            <!-- SINGLE PREDICTION FORM -->
+      <div id="singleForm" class="form-panel">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="field-group">
+            <label class="field-label" for="Age">Age</label>
+            <input id="Age" type="number" placeholder="Enter age" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="Income">Income</label>
+            <input id="Income" type="number" placeholder="Enter income" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="LoanAmount">Loan Amount</label>
+            <input id="LoanAmount" type="number" placeholder="Loan amount" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="CreditScore">Credit Score</label>
+            <input id="CreditScore" type="number" placeholder="Enter credit score" class="input">
+          </div>
 
-    <!-- RESULT SINGLE -->
-    <div id="result" class="result-box"></div>
+          <div class="field-group">
+            <label class="field-label" for="MonthsEmployed">Months Employed</label>
+            <input id="MonthsEmployed" type="number" placeholder="Months employed" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="NumCreditLines">Credit Lines</label>
+            <input id="NumCreditLines" type="number" placeholder="Active credit lines" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="InterestRate">Interest Rate</label>
+            <input id="InterestRate" type="number" step="0.01" placeholder="Annual interest %" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="LoanTerm">Loan Term</label>
+            <input id="LoanTerm" type="number" placeholder="Loan term in months" class="input">
+          </div>
 
-    <!-- BATCH UPLOAD -->
-    <h2 class="mt-6 font-bold">Batch Prediction (CSV)</h2>
-    <input type="file" id="csvFile" accept=".csv" class="input">
-    <button onclick="batchPredict()" class="btn mt-2">Analyze Batch</button>
-    <div id="batchResult" class="result-box"></div>
+          <div class="field-group">
+            <label class="field-label" for="DTIRatio">DTI Ratio</label>
+            <input id="DTIRatio" type="number" step="0.01" placeholder="Debt-to-Income %" class="input">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="Education">Education</label>
+            <select id="Education" class="input">
+              <option value="">Select</option>
+              <option>High School</option>
+              <option>Bachelor's</option>
+              <option>Master's</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="EmploymentType">Employment Type</label>
+            <select id="EmploymentType" class="input">
+              <option value="">Select</option>
+              <option>Full-time</option>
+              <option>Self-employed</option>
+              <option>Unemployed</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="MaritalStatus">Marital Status</label>
+            <select id="MaritalStatus" class="input">
+              <option value="">Select</option>
+              <option>Single</option>
+              <option>Married</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="HasMortgage">Has Mortgage?</label>
+            <select id="HasMortgage" class="input">
+              <option value="">Select</option>
+              <option>No</option>
+              <option>Yes</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="HasDependents">Has Dependents?</label>
+            <select id="HasDependents" class="input">
+              <option value="">Select</option>
+              <option>No</option>
+              <option>Yes</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="LoanPurpose">Loan Purpose</label>
+            <select id="LoanPurpose" class="input">
+              <option value="">Select</option>
+              <option>Home</option>
+              <option>Business</option>
+              <option>Education</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="HasCoSigner">Has Co-Signer?</label>
+            <select id="HasCoSigner" class="input">
+              <option value="">Select</option>
+              <option>No</option>
+              <option>Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="predict()" class="btn mt-4">Analyze Risk</button>
+        <div id="result" class="result-box mt-4"></div>
+      </div>
+    <div id="batchForm" class="form-panel hidden">
+  <input type="file" id="csvFile" accept=".csv" class="input">
+  <button onclick="batchPredict()" class="btn mt-2">Analyze Batch</button>
+  <div id="batchResult" class="result-box mt-4"></div>
+</div>
   </div>
 
   <!-- SCRIPT -->
   <script>
-    // ---------- Single Prediction ----------
+    // Tab switching
+    const singleTab = document.getElementById("singleTab");
+    const batchTab = document.getElementById("batchTab");
+    const singleForm = document.getElementById("singleForm");
+    const batchForm = document.getElementById("batchForm");
+
+    singleTab.onclick = () => {
+      singleTab.classList.add("active");
+      batchTab.classList.remove("active");
+      singleForm.classList.remove("hidden");
+      batchForm.classList.add("hidden");
+    }
+
+    batchTab.onclick = () => {
+      batchTab.classList.add("active");
+      singleTab.classList.remove("active");
+      batchForm.classList.remove("hidden");
+      singleForm.classList.add("hidden");
+    }
+
+    // Theme toggle
+    const themeSwitch = document.getElementById("themeSwitch");
+    themeSwitch.addEventListener("change", () => {
+      document.body.classList.toggle("dark-theme", themeSwitch.checked);
+    });
+
+    // Single prediction
     async function predict() {
       const data = {
         Age: parseInt(document.getElementById("Age").value),
@@ -96,7 +185,6 @@
         InterestRate: parseFloat(document.getElementById("InterestRate").value),
         LoanTerm: parseInt(document.getElementById("LoanTerm").value),
         DTIRatio: parseFloat(document.getElementById("DTIRatio").value),
-
         Education: document.getElementById("Education").value,
         EmploymentType: document.getElementById("EmploymentType").value,
         MaritalStatus: document.getElementById("MaritalStatus").value,
@@ -119,7 +207,6 @@
         });
 
         const result = await response.json();
-
         document.getElementById("result").innerHTML = `
           <div class="result-card">
             <h2>${result.risk_level}</h2>
@@ -134,7 +221,7 @@
       }
     }
 
-    // ---------- Batch Prediction ----------
+    // Batch prediction
     async function batchPredict() {
       const file = document.getElementById("csvFile").files[0];
       if (!file) { alert("Please select a CSV file"); return; }
@@ -145,33 +232,32 @@
       try {
         const response = await fetch("http://127.0.0.1:8000/batch_predict", {
           method: "POST",
-          body: formData  // ✅ do NOT set Content-Type manually
+          body: formData
         });
 
+        if(!response.ok) throw new Error(`Server responded ${response.status}`);
         const results = await response.json();
-        console.log(results); // Optional: check browser console
 
-        // Display results in table
-        let html = `<table class="w-full border border-gray-300 mt-2">
+        let html = `<table class="table-auto w-full border-collapse mt-4">
                       <tr>
                         <th>#</th>
                         <th>Risk</th>
                         <th>Decision</th>
                         <th>Probability</th>
-                        <th>Risk Factors</th>
+                        <th>Active Risk Factors</th>
                       </tr>`;
 
         results.results.forEach((r, i) => {
-          html += `<tr class="${r.risk_level.includes('HIGH') ? 'bg-red-100' : ''}">
+          html += `<tr class="${r.risk_level.includes('HIGH') ? 'bg-red-100' : 'bg-white dark:bg-gray-800'}">
                     <td>${i+1}</td>
                     <td>${r.risk_level}</td>
                     <td>${r.decision}</td>
                     <td>${r.probability_of_default}</td>
                     <td>${r.active_risk_factors.join(", ")}</td>
-                   </tr>`;
+                  </tr>`;
         });
-
         html += "</table>";
+
         document.getElementById("batchResult").innerHTML = html;
 
       } catch (err) {

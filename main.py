@@ -54,7 +54,7 @@ def predict_row(data: dict):
         risk = "NO RISK 🟢"
         decision = "Loan Approved ✅"
     elif prob < 0.6:
-        risk = "LOW/MEDIUM RISK 🟡/🟠"
+        risk = "MEDIUM RISK 🟠"
         decision = "Further Review ⚠️"
     else:
         risk = "HIGH RISK 🔴"
