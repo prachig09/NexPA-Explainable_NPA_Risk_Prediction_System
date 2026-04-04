@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NexPA - Explainable NPA Risk System</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gray-100 p-6">
+  <div class="container">
+    <h1 class="title">
+      💳 NexPA - Explainable NPA Risk Prediction System
+    </h1>
+
+    <!-- SINGLE USER FORM -->
+    <div class="grid grid-cols-2 gap-4">
+      <input id="Age" placeholder="Age" class="input">
+      <input id="Income" placeholder="Income" class="input">
+      <input id="LoanAmount" placeholder="Loan Amount" class="input">
+      <input id="CreditScore" placeholder="Credit Score" class="input">
+      <input id="MonthsEmployed" placeholder="Months Employed" class="input">
+      <input id="NumCreditLines" placeholder="Credit Lines" class="input">
+      <input id="InterestRate" placeholder="Interest Rate" class="input">
+      <input id="LoanTerm" placeholder="Loan Term" class="input">
+      <input id="DTIRatio" placeholder="DTI Ratio" class="input">
+
+      <select id="Education" class="input">
+        <option>High School</option>
+        <option>Bachelor's</option>
+        <option>Master's</option>
+      </select>
+
+      <select id="EmploymentType" class="input">
+        <option>Full-time</option>
+        <option>Self-employed</option>
+        <option>Unemployed</option>
+      </select>
+
+      <select id="MaritalStatus" class="input">
+        <option>Single</option>
+        <option>Married</option>
+      </select>
+
+      <select id="HasMortgage" class="input">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+
+      <select id="HasDependents" class="input">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+
+      <select id="LoanPurpose" class="input">
+        <option>Home</option>
+        <option>Business</option>
+        <option>Education</option>
+        <option>Other</option>
+      </select>
+
+      <select id="HasCoSigner" class="input">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+    </div>
+
+    <!-- SINGLE ANALYSIS BUTTON -->
+    <button onclick="predict()" class="btn">Analyze Risk</button>
+
+    <!-- RESULT SINGLE -->
+    <div id="result" class="result-box"></div>
+
+    <!-- BATCH UPLOAD -->
+    <h2 class="mt-6 font-bold">Batch Prediction (CSV)</h2>
+    <input type="file" id="csvFile" accept=".csv" class="input">
+    <button onclick="batchPredict()" class="btn mt-2">Analyze Batch</button>
+    <div id="batchResult" class="result-box"></div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // ---------- Single Prediction ----------
+    async function predict() {
+      const data = {
+        Age: parseInt(document.getElementById("Age").value),
+        Income: parseInt(document.getElementById("Income").value),
+        LoanAmount: parseInt(document.getElementById("LoanAmount").value),
+        CreditScore: parseInt(document.getElementById("CreditScore").value),
+        MonthsEmployed: parseInt(document.getElementById("MonthsEmployed").value),
+        NumCreditLines: parseInt(document.getElementById("NumCreditLines").value),
+        InterestRate: parseFloat(document.getElementById("InterestRate").value),
+        LoanTerm: parseInt(document.getElementById("LoanTerm").value),
+        DTIRatio: parseFloat(document.getElementById("DTIRatio").value),
+
+        Education: document.getElementById("Education").value,
+        EmploymentType: document.getElementById("EmploymentType").value,
+        MaritalStatus: document.getElementById("MaritalStatus").value,
+        HasMortgage: document.getElementById("HasMortgage").value,
+        HasDependents: document.getElementById("HasDependents").value,
+        LoanPurpose: document.getElementById("LoanPurpose").value,
+        HasCoSigner: document.getElementById("HasCoSigner").value
+      };
+
+      if (Object.values(data).some(v => v === "" || Number.isNaN(v))) {
+        alert("Please fill all fields correctly!");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        document.getElementById("result").innerHTML = `
+          <div class="result-card">
+            <h2>${result.risk_level}</h2>
+            <p>${result.decision}</p>
+            <p><strong>Probability:</strong> ${result.probability_of_default}</p>
+            <p><strong>⚠️ Risks:</strong> ${result.active_risk_factors.join(", ")}</p>
+          </div>
+        `;
+      } catch (error) {
+        console.error(error);
+        alert("Error connecting to backend");
+      }
+    }
+
+    // ---------- Batch Prediction ----------
+    async function batchPredict() {
+      const file = document.getElementById("csvFile").files[0];
+      if (!file) { alert("Please select a CSV file"); return; }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/batch_predict", {
+          method: "POST",
+          body: formData  // ✅ do NOT set Content-Type manually
+        });
+
+        const results = await response.json();
+        console.log(results); // Optional: check browser console
+
+        // Display results in table
+        let html = `<table class="w-full border border-gray-300 mt-2">
+                      <tr>
+                        <th>#</th>
+                        <th>Risk</th>
+                        <th>Decision</th>
+                        <th>Probability</th>
+                        <th>Risk Factors</th>
+                      </tr>`;
+
+        results.results.forEach((r, i) => {
+          html += `<tr class="${r.risk_level.includes('HIGH') ? 'bg-red-100' : ''}">
+                    <td>${i+1}</td>
+                    <td>${r.risk_level}</td>
+                    <td>${r.decision}</td>
+                    <td>${r.probability_of_default}</td>
+                    <td>${r.active_risk_factors.join(", ")}</td>
+                   </tr>`;
+        });
+
+        html += "</table>";
+        document.getElementById("batchResult").innerHTML = html;
+
+      } catch (err) {
+        console.error(err);
+        alert("Error connecting to backend for batch prediction");
+      }
+    }
+  </script>
+</body>
+</html>
