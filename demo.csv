@@ -1,0 +1,6 @@
+Age,Income,LoanAmount,CreditScore,MonthsEmployed,NumCreditLines,InterestRate,LoanTerm,DTIRatio,Education,EmploymentType,MaritalStatus,HasMortgage,HasDependents,LoanPurpose,HasCoSigner
+35,45000,15000,680,60,3,10.5,36,0.3,Bachelor's,Full-time,Single,No,No,Home,No
+50,80000,200000,720,120,5,12.0,120,0.5,Master's,Full-time,Married,Yes,Yes,Business,Yes
+28,30000,10000,450,24,2,15.0,24,0.7,High School,Self-employed,Single,No,No,Education,No
+40,60000,50000,500,84,4,9.5,60,0.6,Bachelor's,Full-time,Married,Yes,Yes,Home,No
+33,35000,12000,580,48,3,13.0,36,0.4,High School,Unemployed,Single,No,Yes,Other,No
