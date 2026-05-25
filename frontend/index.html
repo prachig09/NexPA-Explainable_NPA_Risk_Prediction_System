@@ -1,194 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexPA - Indian Bank Asset Quality Monitor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .custom-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); }
-    </style>
+  <meta charset="UTF-8">
+  <title>NexPA - Explainable NPA Risk System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    .custom-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); }
+    .view-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* ======================================================== */
+    /* GLOBAL BACKGROUND IMAGE WITH TRANSPARENCY EFFECT        */
+    /* ======================================================== */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; 
+      
+      /* FIXED PATH: Steps up one folder out of /frontend to look at the project root */
+      background-image: url('../bg_image.jpg');
+      
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+      /* Balanced backdrop opacity for seamless look across all page split nodes */
+      opacity: 0.25; 
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
 
-    <!-- Header Section -->
-    <header class="custom-gradient text-white p-6 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-black tracking-tight">NexPA Framework</h1>
-                <p class="text-xs text-blue-200 mt-1 uppercase font-bold tracking-widest">RBI Compliance Asset Recovery Platform</p>
-            </div>
-            <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3 py-1 text-xs rounded-full font-mono">Live Node v2.1</span>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans min-h-screen view-transition">
+
+  <div id="landingPage" class="view-transition fixed inset-0 z-50 custom-gradient flex flex-col justify-center items-center text-white px-6">
+    <div class="max-w-3xl text-center space-y-6 animate-fade-in">
+      <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3 py-1 text-xs rounded-full font-mono uppercase tracking-widest">
+        Enterprise Portfolio Asset Risk Audit Engine
+      </span>
+      <h1 class="text-5xl md:text-6xl font-black tracking-tight">NexPA Framework</h1>
+      <p class="text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
+        An advanced decentralized multi-agent system built to cross-evaluate credit portfolios. Powered by automated feature builders, statistical predictive models, and strict statutory RBI asset classification maps.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 text-left">
+        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+          <div class="text-blue-400 font-bold text-sm mb-1">01. Data Scout Agent</div>
+          <div class="text-xs text-slate-400">Computes real-time leverage thresholds and active FOIR commitment variables.</div>
         </div>
-    </header>
+        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+          <div class="text-blue-400 font-bold text-sm mb-1">02. Risk Oracle Agent</div>
+          <div class="text-xs text-slate-400">Processes regularized gradient boosted ensembles to flag early default anomalies.</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+          <div class="text-blue-400 font-bold text-sm mb-1">03. Legal Scribe Agent</div>
+          <div class="text-xs text-slate-400">Enforces IRAC rules and designates actionable recovery workflows via SARFAESI parameters.</div>
+        </div>
+      </div>
 
-    <main class="container mx-auto p-6 max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="pt-8">
+        <button onclick="enterDashboard()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg text-sm uppercase tracking-wider transition-all transform hover:scale-105 shadow-lg">
+          Launch Operations Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="dashboardApp" class="hidden min-h-screen flex flex-col md:flex-row">
+    
+    <aside class="w-full md:w-64 bg-slate-900/40 text-slate-300 flex flex-col justify-between p-6 border-r border-slate-200/40 dark:border-slate-800/40 dark:bg-slate-950/40 backdrop-blur-xl shadow-xl transition-all">
+      <div class="space-y-6">
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-slate-950 dark:text-white">NexPA Workspace</h1>
+          <p class="text-[10px] text-white dark:text-white uppercase tracking-widest font-bold mt-1">Multi-Agent Control Node</p>
+        </div>
+
+        <nav class="space-y-2">
+          <button id="singleTab" class="w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg bg-blue-700 text-white shadow-md transition-all">
+            Single Account Profile
+          </button>
+          <button id="batchTab" class="w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-900/20 dark:hover:bg-slate-100/10 hover:text-slate-950 hover:dark:text-white transition-all">
+            Batch Portfolio Upload
+          </button>
+        </nav>
+      </div>
+
+      <div class="border-t border-slate-200/40 dark:border-slate-800/40 pt-4 space-y-3">
+        <div class="flex items-center justify-between text-xs font-medium text-slate-400 dark:text-slate-400">
+          <span>Dark Mode Terminal</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="themeSwitch" class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+        <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
+          Status: Connected to Port 8000
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-8 max-w-5xl">
+      
+      <div id="singleForm" class="space-y-6">
+        <div class="border-b border-slate-200 dark:border-slate-800 pb-3">
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">Portfolio Parameter Audit Form</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Fill out the retail credit file metrics below to query the evaluation pool.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Age</label><input id="Age" type="number" value="35" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Annual Income (INR)</label><input id="Income" type="number" value="800000" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Loan Amount Outstanding</label><input id="LoanAmount" type="number" value="2000000" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">CIBIL Bureau Score</label><input id="CreditScore" type="number" value="710" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Months Employed</label><input id="MonthsEmployed" type="number" value="48" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Active Credit Lines Balance</label><input id="NumCreditLines" type="number" value="3" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Lending Rate (%)</label><input id="InterestRate" type="number" step="0.01" value="10.5" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Loan Term (Months)</label><input id="LoanTerm" type="number" value="120" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Debt-to-Income Ratio</label><input id="DTIRatio" type="number" step="0.01" value="0.45" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white focus:outline-blue-600 backdrop-blur-sm"></div>
+          
+          <div class="flex flex-col">
+            <label class="text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">Days Past Due (DPD Tracker)</label>
+            <input id="DPD" type="number" value="45" class="border border-amber-300 dark:border-amber-900 rounded px-3 py-2 text-sm bg-amber-50/70 dark:bg-amber-950/20 text-amber-900 dark:text-amber-300 font-bold focus:outline-blue-600 backdrop-blur-sm">
+          </div>
+          
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Education Certification Level</label><select id="Education" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>Graduate</option><option>PostGraduate</option><option>Undergraduate</option><option>Professional</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Employment Type</label><select id="EmploymentType" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>Salaried</option><option>Self-Employed</option><option>Unemployed</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Marital Status</label><select id="MaritalStatus" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>Married</option><option>Single</option><option>Divorced</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Has Mortgage Attached?</label><select id="HasMortgage" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>No</option><option>Yes</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Has Dependents?</label><select id="HasDependents" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>No</option><option>Yes</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Credit Allocation Purpose</label><select id="LoanPurpose" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>Home</option><option>Business</option><option>Auto</option><option>Education</option><option>Personal</option></select></div>
+          <div class="flex flex-col"><label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Has Co-Signer?</label><select id="HasCoSigner" class="border dark:border-slate-800 rounded px-3 py-2 text-sm bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white backdrop-blur-sm"><option>No</option><option>Yes</option></select></div>
+        </div>
+
+        <button onclick="predict()" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 rounded-lg text-sm uppercase tracking-wider transition-all shadow-md">
+          Execute System Risk Audit
+        </button>
         
-        <!-- Interactive Single Assessment Form Frame -->
-        <section class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-bold text-gray-900 border-b pb-3 mb-4">Account Portfolio Parameters</h2>
-            <form id="npaForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Age</label><input type="number" id="Age" value="38" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Annual Income (INR)</label><input type="number" id="Income" value="950000" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Loan Amount Outstanding (INR)</label><input type="number" id="LoanAmount" value="2500000" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">CIBIL Bureau Score (300-850)</label><input type="number" id="CreditScore" value="720" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Months Employed</label><input type="number" id="MonthsEmployed" value="48" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Active Credit Lines Balance</label><input type="number" id="NumCreditLines" value="3" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Lending Rate (%)</label><input type="number" step="0.01" id="InterestRate" value="10.5" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Loan Term Length (Months)</label><input type="number" id="LoanTerm" value="120" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Calculated Debt-to-Income Ratio</label><input type="number" step="0.01" id="DTIRatio" value="0.38" class="w-full border rounded p-2 text-sm bg-gray-50 focus:bg-white" required></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1">Tracked Overdue Timeline (DPD)</label><input type="number" id="DPD" value="45" class="w-full border rounded p-2 text-sm bg-amber-50 focus:bg-white font-semibold" required></div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Credit Allocation Purpose</label>
-                    <select id="LoanPurpose" class="w-full border rounded p-2 text-sm bg-gray-50"><option>Home</option><option>Business</option><option>Auto</option><option>Education</option><option>Personal</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Employment Type Status</label>
-                    <select id="EmploymentType" class="w-full border rounded p-2 text-sm bg-gray-50"><option>Salaried</option><option>Self-Employed</option><option>Unemployed</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Education Certification Level</label>
-                    <select id="Education" class="w-full border rounded p-2 text-sm bg-gray-50"><option>Graduate</option><option>PostGraduate</option><option>Undergraduate</option><option>Professional</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Marital Status</label>
-                    <select id="MaritalStatus" class="w-full border rounded p-2 text-sm bg-gray-50"><option>Married</option><option>Single</option><option>Divorced</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Active Collateral/Mortgage Attached</label>
-                    <select id="HasMortgage" class="w-full border rounded p-2 text-sm bg-gray-50"><option>No</option><option>Yes</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Family Dependents Present</label>
-                    <select id="HasDependents" class="w-full border rounded p-2 text-sm bg-gray-50"><option>No</option><option>Yes</option></select>
-                </div>
-                <div class="md:col-span-2 pt-2">
-                    <button type="button" onclick="predictSingleAccount()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow text-sm uppercase tracking-wider transition">Evaluate Account Status</button>
-                </div>
-            </form>
-        </section>
+        <div id="result" class="mt-4"></div>
+      </div>
 
-        <!-- Right Management & Batch Operational Processing Sidebar Panel -->
-        <section class="space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-bold text-gray-900 border-b pb-3 mb-4">Single Audit Feedback</h2>
-                <div id="singleOutput" class="text-sm text-gray-500 italic p-4 text-center bg-gray-50 rounded border border-dashed">Submit an asset profile to generate real-time RBI classification and remediation measures.</div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-bold text-gray-900 border-b pb-3 mb-4">Enterprise Batch Dispatch Desk</h2>
-                <label class="block text-xs font-bold text-gray-500 mb-2">Upload Core Operational Ledger File (.csv)</label>
-                <input type="file" id="batchFileSelector" accept=".csv" class="w-full text-xs text-gray-600 border rounded p-2 bg-gray-50 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                <button type="button" onclick="processBatchLedger()" class="w-full mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-4 rounded shadow text-xs uppercase tracking-wider transition">Process Batch Profile</button>
-            </div>
-        </section>
-    </main>
-
-    <!-- Consolidated Ledger Performance Report Render Block -->
-    <section class="container mx-auto px-6 pb-12">
-        <div id="batchReportContainer" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-            <h2 class="text-xl font-black text-gray-900 mb-4 border-b pb-2">Consolidated System Tracking Report</h2>
-            <div class="overflow-x-auto w-full" id="batchTableOutput"></div>
+      <div id="batchForm" class="space-y-6 hidden">
+        <div class="border-b border-slate-200 dark:border-slate-800 pb-3">
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">Mass Portfolio Ledger Dispatch Desk</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Upload an operational CSV ledger containing concurrent credit files for instant verification.</p>
         </div>
-    </section>
 
-    <!-- UI Interaction Scripts Orchestrator -->
-    <script>
-        const API_HOST = "http://127.0.0.1:8000";
+        <div class="p-8 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl bg-white/50 dark:bg-slate-900/50 text-center space-y-4 backdrop-blur-sm">
+          <input type="file" id="csvFile" accept=".csv" class="mx-auto block text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-slate-800 dark:file:text-blue-300 hover:file:bg-blue-100">
+          <button onclick="batchPredict()" class="bg-slate-800 hover:bg-slate-900 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg text-xs uppercase tracking-wider transition-all shadow-sm">
+            Process Batch Files
+          </button>
+        </div>
+        
+        <div id="batchResult" class="overflow-x-auto bg-white/80 dark:bg-slate-900/80 rounded-lg border dark:border-slate-800 shadow-sm backdrop-blur-sm"></div>
+      </div>
 
-        async function predictSingleAccount() {
-            const outputFrame = document.getElementById("singleOutput");
-            outputFrame.innerHTML = "<div class='text-center py-4 text-blue-600 font-medium animate-pulse'>Running compliance rules...</div>";
+    </main>
+  </div>
+
+  <script>
+    const API_HOST = "http://127.0.0.1:8000";
+
+    function enterDashboard() {
+      const landing = document.getElementById("landingPage");
+      const app = document.getElementById("dashboardApp");
+      
+      landing.classList.add("opacity-0", "pointer-events-none");
+      setTimeout(() => {
+        landing.classList.add("hidden");
+        app.classList.remove("hidden");
+      }, 400);
+    }
+
+    const themeSwitch = document.getElementById("themeSwitch");
+    themeSwitch.addEventListener("change", () => {
+      if (themeSwitch.checked) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    });
+
+    const singleTab = document.getElementById("singleTab");
+    const batchTab = document.getElementById("batchTab");
+    const singleForm = document.getElementById("singleForm");
+    const batchForm = document.getElementById("batchForm");
+
+    function switchView(activeTab, targetForm, inactiveTab, hiddenForm) {
+      activeTab.classList.add("bg-blue-700", "text-white", "shadow-md");
+      activeTab.classList.remove("text-slate-700", "dark:text-slate-300", "hover:bg-slate-900/20", "dark:hover:bg-slate-100/10", "hover:text-slate-950", "dark:hover:text-white");
+      
+      inactiveTab.classList.remove("bg-blue-700", "text-white", "shadow-md");
+      inactiveTab.classList.add("text-slate-700", "dark:text-slate-300", "hover:bg-slate-900/20", "dark:hover:bg-slate-100/10", "hover:text-slate-950", "dark:hover:text-white");
+      
+      targetForm.classList.remove("hidden");
+      hiddenForm.classList.add("hidden");
+    }
+
+    singleTab.onclick = () => switchView(singleTab, singleForm, batchTab, batchForm);
+    batchTab.onclick = () => switchView(batchTab, batchForm, singleTab, singleForm);
+
+    async function predict() {
+      const resultBox = document.getElementById("result");
+      resultBox.innerHTML = "<div class='text-sm text-blue-600 dark:text-blue-400 animate-pulse font-medium'>Querying multi-agent evaluation registers...</div>";
+
+      const data = {
+        Age: parseInt(document.getElementById("Age").value),
+        Income: parseInt(document.getElementById("Income").value),
+        LoanAmount: parseInt(document.getElementById("LoanAmount").value),
+        CreditScore: parseInt(document.getElementById("CreditScore").value),
+        MonthsEmployed: parseInt(document.getElementById("MonthsEmployed").value),
+        NumCreditLines: parseInt(document.getElementById("NumCreditLines").value),
+        InterestRate: parseFloat(document.getElementById("InterestRate").value),
+        LoanTerm: parseInt(document.getElementById("LoanTerm").value),
+        DTIRatio: parseFloat(document.getElementById("DTIRatio").value),
+        DPD: parseInt(document.getElementById("DPD").value),
+        Education: document.getElementById("Education").value,
+        EmploymentType: document.getElementById("EmploymentType").value,
+        MaritalStatus: document.getElementById("MaritalStatus").value,
+        HasMortgage: document.getElementById("HasMortgage").value,
+        HasDependents: document.getElementById("HasDependents").value,
+        LoanPurpose: document.getElementById("LoanPurpose").value,
+        HasCoSigner: document.getElementById("HasCoSigner").value
+      };
+
+      if (Object.values(data).some(v => v === "" || Number.isNaN(v))) {
+        resultBox.innerHTML = "<div class='p-3 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-l-4 border-red-500 text-xs font-bold'>Form Error: Please configure all input variables correctly before processing.</div>";
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_HOST}/predict`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+        const res = await response.json();
+        
+        let accentColor = res.color_profile === 'GREEN' ? '#10B981' : res.color_profile === 'AMBER' ? '#F59E0B' : '#EF4444';
+
+        resultBox.innerHTML = `
+          <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border dark:border-slate-800 rounded-xl shadow-sm p-6 border-l-4" style="border-left-color: ${accentColor}">
+            <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 mb-1">Asset Audit Status</div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-3">${res.rbi_asset_classification}</h3>
             
-            const payload = {};
-            const elements = ["Age", "Income", "LoanAmount", "CreditScore", "MonthsEmployed", "NumCreditLines", "InterestRate", "LoanTerm", "DTIRatio", "Education", "EmploymentType", "MaritalStatus", "HasMortgage", "HasDependents", "LoanPurpose", "HasCoSigner", "DPD"];
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600 dark:text-slate-300 border-t dark:border-slate-800 pt-3">
+              <div><strong>Overdue Duration (DPD):</strong> ${res.account_dpd} Days</div>
+              <div><strong>Statistical Default Risk (ML):</strong> ${(res.ml_default_probability * 100).toFixed(1)}%</div>
+              <div><strong>Regulatory Capital Provisioning:</strong> <span class="bg-slate-100 dark:bg-slate-800 font-mono px-1.5 py-0.5 rounded font-bold text-slate-900 dark:text-slate-200">${res.regulatory_provisioning}</span></div>
+              <div><strong>Primary Risk Core Driver:</strong> <span class="text-red-700 dark:text-red-400 font-medium">${res.risk_drivers.join(", ")}</span></div>
+            </div>
             
-            elements.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) payload[id] = ["Education", "EmploymentType", "MaritalStatus", "HasMortgage", "HasDependents", "LoanPurpose", "HasCoSigner"].includes(id) ? el.value : Number(el.value);
-            });
-            payload["HasCoSigner"] = payload["HasCoSigner"] || "No";
+            <div class="mt-4 p-3 bg-slate-50/80 dark:bg-slate-950/80 border border-dashed dark:border-slate-800 rounded text-xs text-slate-700 dark:text-slate-400">
+              <strong class="text-blue-800 dark:text-blue-400 block uppercase tracking-wide font-bold mb-1">Enforced Legal Remediation Protocol:</strong>
+              ${res.actionable_measure}
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        resultBox.innerHTML = `<div class='p-3 bg-red-50 dark:bg-red-950/30 border-l-4 border-red-500 text-xs text-red-700 dark:text-red-400'><strong>Connection Refused:</strong> Verify your local FastAPI engine is active on ${API_HOST}.</div>`;
+      }
+    }
 
-            try {
-                const res = await fetch(`${API_HOST}/predict`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                
-                let accentColor = data.color_profile === 'GREEN' ? '#10B981' : data.color_profile === 'AMBER' ? '#F59E0B' : '#EF4444';
-                
-                outputFrame.innerHTML = `
-                    <div class="p-4 rounded-lg border-l-4 bg-gray-50" style="border-color: ${accentColor}">
-                        <div class="text-xs uppercase tracking-widest font-bold text-gray-400 mb-1">RBI Status</div>
-                        <div class="text-lg font-black text-slate-900 mb-3">${data.rbi_asset_classification}</div>
-                        <div class="space-y-1.5 text-xs text-slate-700">
-                            <p><strong>Overdue Status (DPD):</strong> ${data.account_dpd} Days</p>
-                            <p><strong>Predictive Portfolio Risk (ML):</strong> ${(data.ml_default_probability * 100).toFixed(1)}%</p>
-                            <p><strong>Mandated Provisioning:</strong> <span class="bg-blue-100 text-blue-800 font-mono px-1.5 py-0.5 rounded">${data.regulatory_provisioning}</span></p>
-                        </div>
-                        <div class="mt-4 p-3 bg-white border rounded text-xs text-slate-900 shadow-sm">
-                            <strong class="text-blue-700 uppercase tracking-wide block mb-1">Required Recovery Action:</strong>
-                            ${data.actionable_measure}
-                        </div>
-                    </div>`;
-            } catch (err) {
-                outputFrame.innerHTML = `<div class='p-3 bg-red-50 border-l-4 border-red-500 text-xs text-red-700'><strong>Connection Failure:</strong> Backend server at ${API_HOST} is unreachable.</div>`;
-            }
-        }
+    async function batchPredict() {
+      const resultBox = document.getElementById("batchResult");
+      const file = document.getElementById("csvFile").files[0];
+      if (!file) { alert("Please attach a targeted CSV spreadsheet ledger first."); return; }
 
-        async function processBatchLedger() {
-            const inputTarget = document.getElementById("batchFileSelector");
-            const container = document.getElementById("batchReportContainer");
-            const tableDiv = document.getElementById("batchTableOutput");
-            
-            if (!inputTarget.files[0]) { alert("Operation rejected: Please select a balance sheet CSV file first."); return; }
-            
-            const formData = new FormData();
-            formData.append("file", inputTarget.files[0]);
-            
-            tableDiv.innerHTML = "<div class='text-center py-8 text-slate-500 font-medium animate-pulse'>Processing ledger records through scoring engine...</div>";
-            container.classList.remove("hidden");
+      const formData = new FormData();
+      formData.append("file", file);
+      resultBox.innerHTML = "<div class='p-6 text-sm text-slate-500 font-medium animate-pulse text-center dark:text-slate-400'>Streaming mass array metrics through orchestrator clusters...</div>";
 
-            try {
-                const res = await fetch(`${API_HOST}/batch_predict`, { method: "POST", body: formData });
-                const data = await res.json();
-                
-                let html = `
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 uppercase font-bold tracking-wider">
-                                <th class="p-3">Ref ID</th>
-                                <th class="p-3">RBI Classification</th>
-                                <th class="p-3">DPD Status</th>
-                                <th class="p-3">Predictive ML Risk</th>
-                                <th class="p-3">Regulatory Provisioning</th>
-                                <th class="p-3">Statutory Remediation Protocol</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">`;
+      try {
+        const response = await fetch(`${API_HOST}/batch_predict`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
 
-                data.results.forEach((r, i) => {
-                    let rowBg = r.color_profile === 'CRITICAL_RED' || r.color_profile === 'RED' ? 'bg-red-50/50 hover:bg-red-50' : r.color_profile === 'AMBER' ? 'bg-amber-50/40 hover:bg-amber-50' : 'bg-white hover:bg-slate-50';
-                    html += `
-                        <tr class="${rowBg} transition">
-                            <td class="p-3 font-mono text-slate-500">ACC-${10400 + i}</td>
-                            <td class="p-3 font-bold text-slate-900">${r.rbi_asset_classification}</td>
-                            <td class="p-3 font-medium">${r.account_dpd} Days</td>
-                            <td class="p-3">${(r.ml_default_probability * 100).toFixed(0)}%</td>
-                            <td class="p-3"><span class="px-2 py-0.5 font-mono font-bold rounded bg-slate-200/60">${r.regulatory_provisioning}</span></td>
-                            <td class="p-3 font-medium text-slate-800">${r.actionable_measure}</td>
-                        </tr>`;
-                });
+        let html = `
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100/80 dark:bg-slate-800/80 border-b dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">
+                <th class="p-3">Ref ID</th>
+                <th class="p-3">Asset Quality Profile</th>
+                <th class="p-3">DPD</th>
+                <th class="p-3">ML Forecaster</th>
+                <th class="p-3">Provisioning</th>
+                <th class="p-3">Recovery Directives</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y dark:divide-slate-800 text-slate-700 dark:text-slate-300">`;
 
-                html += "</tbody></table>";
-                tableDiv.innerHTML = html;
-            } catch (err) {
-                tableDiv.innerHTML = `<div class='p-4 bg-red-50 text-xs text-red-700 rounded border border-red-200'><strong>Batch failure:</strong> API processing error. Verify that your server terminal is listening on port 8000.</div>`;
-            }
-        }
-    </script>
+        data.results.forEach((r, i) => {
+          let badgeColor = r.color_profile === 'GREEN' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400' : r.color_profile === 'AMBER' ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400' : 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400';
+          html += `
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+              <td class="p-3 font-mono text-slate-400">ACC-${1200 + i}</td>
+              <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${badgeColor}">${r.rbi_asset_classification}</span></td>
+              <td class="p-3 font-medium">${r.account_dpd} Days</td>
+              <td class="p-3 font-mono">${(r.ml_default_probability * 100).toFixed(0)}%</td>
+              <td class="p-3"><span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono font-bold text-slate-900 dark:text-slate-200">${r.regulatory_provisioning}</span></td>
+              <td class="p-3 font-medium text-slate-900 dark:text-white">${r.actionable_measure}</td>
+            </tr>`;
+        });
+
+        html += "</tbody></table>";
+        resultBox.innerHTML = html;
+      } catch (err) {
+        resultBox.innerHTML = "<div class='p-4 text-center text-xs text-red-700 dark:text-red-400 font-medium'>Batch run execution aborted. Verify CSV schema parameters match system requirements.</div>";
+      }
+    }
+  </script>
 </body>
 </html>
