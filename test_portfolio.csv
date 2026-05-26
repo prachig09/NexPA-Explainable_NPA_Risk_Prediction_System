@@ -1,0 +1,8 @@
+Age,Income,LoanAmount,CreditScore,MonthsEmployed,NumCreditLines,InterestRate,LoanTerm,DTIRatio,DPD,Education,EmploymentType,MaritalStatus,HasMortgage,HasDependents,LoanPurpose,HasCoSigner
+28,650000,1200000,765,36,2,8.5,60,0.28,0,Graduate,Salaried,Single,No,No,Auto,No
+42,1400000,4500000,720,120,4,10.25,180,0.42,15,PostGraduate,Salaried,Married,Yes,Yes,Home,No
+35,500000,2500000,610,18,5,12.0,84,0.55,45,Undergraduate,Self-Employed,Divorced,No,Yes,Personal,Yes
+51,950000,1500000,680,84,3,9.5,120,0.35,0,Professional,Salaried,Married,Yes,No,Business,No
+31,4200000,8000000,790,96,6,7.99,240,0.22,0,PostGraduate,Salaried,Married,Yes,Yes,Home,No
+47,380000,900000,540,12,3,14.5,36,0.62,95,Undergraduate,Unemployed,Single,No,No,Personal,No
+39,850000,3200000,645,60,4,11.0,120,0.48,65,Graduate,Self-Employed,Married,Yes,Yes,Business,Yes

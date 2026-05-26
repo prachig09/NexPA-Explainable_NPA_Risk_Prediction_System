@@ -1,10 +1,12 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import joblib
 import io
 from pydantic import BaseModel
 from typing import List, Dict, Any
+from sqlalchemy.orm import Session
+from backend.database import get_db, EvaluationAuditLog
 
 app = FastAPI(title="NexPA - Multi-Agent Asset Quality Workspace")
 
@@ -191,11 +193,27 @@ class AssetDataPayload(BaseModel):
     DPD: int = 0
 
 @app.post("/predict")
-def single_inference_endpoint(data: AssetDataPayload):
-    return system_orchestrator.process_lifecycle(data.dict())
+def single_inference_endpoint(data: AssetDataPayload, db: Session = Depends(get_db)):
+    # 1. Run our multi-agent pipeline logic
+    result = system_orchestrator.process_lifecycle(data.dict())
+    
+    # 2. Persist the results into our audit ledger
+    audit_record = EvaluationAuditLog(
+        account_dpd=result["account_dpd"],
+        rbi_asset_classification=result["rbi_asset_classification"],
+        color_profile=result["color_profile"],
+        ml_default_probability=result["ml_default_probability"],
+        regulatory_provisioning=result["regulatory_provisioning"],
+        actionable_measure=result["actionable_measure"],
+        primary_risk_driver=result["risk_drivers"][0] if result["risk_drivers"] else "Unknown"
+    )
+    db.add(audit_record)
+    db.commit()
+    
+    return result
 
 @app.post("/batch_predict")
-async def batch_inference_endpoint(file: UploadFile = File(...)):
+async def batch_inference_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db)):
     if not file.filename.endswith(".csv"):
         return {"error": "Invalid format. Process requires clean CSV datasets."}
     contents = await file.read()
@@ -203,6 +221,26 @@ async def batch_inference_endpoint(file: UploadFile = File(...)):
     
     batch_results = []
     for _, row in df.iterrows():
-        batch_results.append(system_orchestrator.process_lifecycle(row.to_dict()))
+        result = system_orchestrator.process_lifecycle(row.to_dict())
+        batch_results.append(result)
         
+        # Log each batch record to the database
+        audit_record = EvaluationAuditLog(
+            account_dpd=result["account_dpd"],
+            rbi_asset_classification=result["rbi_asset_classification"],
+            color_profile=result["color_profile"],
+            ml_default_probability=result["ml_default_probability"],
+            regulatory_provisioning=result["regulatory_provisioning"],
+            actionable_measure=result["actionable_measure"],
+            primary_risk_driver=result["risk_drivers"][0] if result["risk_drivers"] else "Unknown"
+        )
+        db.add(audit_record)
+        
+    db.commit() # Save everything in one transaction block
     return {"results": batch_results}
+
+# New complementary endpoint to display audit trail inside your dashboard
+@app.get("/audit_logs")
+def fetch_historical_audit_logs(limit: int = 100, db: Session = Depends(get_db)):
+    logs = db.query(EvaluationAuditLog).order_by(EvaluationAuditLog.id.desc()).limit(limit).all()
+    return logs
